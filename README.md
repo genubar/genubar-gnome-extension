@@ -154,3 +154,8 @@ gjs -m tests/core.test.mjs
 ## License
 
 Licensed under the [MIT License](LICENSE).
+
+
+## Acknowledgements
+
+Developed in collaboration with **Google Gemini**
