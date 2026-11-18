@@ -1,0 +1,232 @@
+/* ==GenubarStyle==
+ * @id          default
+ * @name        Genubar Default
+ * @version     1.0.0
+ * @author      genubar
+ * @description Default stylesheet with Dark and Light mode support
+ * ==/GenubarStyle== */
+
+/*
+ * Default widget-tree & CSS selector guide is installed at:
+ *   ~/.config/genubar/styles/default.css
+ * (Source in core repo: https://github.com/genubar/genubar/blob/main/crates/genubar-config/defaults/style.css)
+ */
+
+/* --- Top panel buttons --- */
+.panel-button.genubar-panel-button {
+    -natural-hpadding: 6px;
+    -minimum-hpadding: 4px;
+}
+
+.genubar-app-button {
+    font-weight: 700;
+    padding: 0 4px;
+}
+
+.genubar-menu-button {
+    font-weight: 500;
+    padding: 0 2px;
+}
+
+/* --- Top panel Light mode override --- */
+#panel.genubar-panel-light {
+    background-color: rgba(242, 242, 246, 0.94);
+    background-gradient-direction: none;
+    border-bottom-width: 1px;
+    border-color: rgba(0, 0, 0, 0.14);
+}
+
+#panel.genubar-panel-light .panel-button,
+#panel.genubar-panel-light .panel-button .clock,
+#panel.genubar-panel-light .genubar-app-button,
+#panel.genubar-panel-light .genubar-menu-button,
+#panel.genubar-panel-light .system-status-icon {
+    color: rgba(20, 20, 22, 0.92);
+}
+
+/* Keep the outer BoxPointer transparent so only the inner popup card draws borders and shadows */
+.genubar-theme-light.popup-menu-boxpointer {
+    background-color: transparent;
+    border-width: 0px;
+    -arrow-background-color: transparent;
+    -arrow-border-width: 0px;
+}
+
+/* Light popup card surface */
+.genubar-theme-light .popup-menu-content {
+    background-color: rgba(246, 246, 249, 0.97);
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0.14);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+    color: rgba(20, 20, 22, 0.92);
+}
+
+/* --- Popup layout & columns --- */
+.genubar-popup-content {
+    padding: 3px 0;
+}
+
+.genubar-columns-container {
+    spacing: 0px;
+}
+
+.genubar-menu-scroll {
+    max-height: 620px;
+    min-width: 215px;
+}
+
+.genubar-submenu-scroll {
+    max-height: 620px;
+    min-width: 215px;
+    border-left-width: 1px;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.genubar-column-box {
+    padding: 4px 6px;
+    spacing: 2px;
+}
+
+/* --- Menu item rows & inline SearchBar --- */
+.genubar-item-row {
+    padding: 5px 10px;
+    border-radius: 9px;
+    font-size: 13px;
+}
+
+.genubar-search-entry {
+    min-width: 220px;
+    padding: 5px 10px;
+    margin: 2px 2px 4px 2px;
+    border-radius: 9px;
+    font-size: 13px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+.genubar-item-icon, .genubar-item-icon-disabled {
+    margin-right: 8px;
+}
+
+.genubar-item-icon-disabled {
+    color: rgba(255, 255, 255, 0.32);
+}
+
+.genubar-item-row:hover, .genubar-item-row-active {
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+.genubar-item-row-disabled, .genubar-item-row-disabled:hover {
+    background-color: transparent;
+}
+
+/* --- Row labels, shortcuts, submenu arrows & separators (Dark defaults) --- */
+.genubar-item-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.genubar-item-label-disabled {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.32);
+}
+
+.genubar-shortcut-label {
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 11.5px;
+    margin-left: 20px;
+    text-align: right;
+}
+
+.genubar-shortcut-label-disabled {
+    color: rgba(255, 255, 255, 0.22);
+    font-size: 11.5px;
+    margin-left: 20px;
+    text-align: right;
+}
+
+.genubar-submenu-arrow {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 12px;
+    margin-left: 16px;
+    text-align: right;
+}
+
+.genubar-submenu-arrow-disabled {
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 12px;
+    margin-left: 16px;
+    text-align: right;
+}
+
+.genubar-menu-separator {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.12);
+    margin: 4px 8px;
+}
+
+/* --- Light theme item overrides --- */
+.genubar-theme-light .genubar-item-label,
+.genubar-theme-light .genubar-item-icon {
+    color: rgba(20, 20, 22, 0.92);
+}
+
+.genubar-theme-light .genubar-item-label-disabled,
+.genubar-theme-light .genubar-item-icon-disabled {
+    color: rgba(20, 20, 22, 0.35);
+}
+
+.genubar-theme-light .genubar-item-row:hover,
+.genubar-theme-light .genubar-item-row-active {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.genubar-theme-light .genubar-shortcut-label {
+    color: rgba(20, 20, 22, 0.50);
+}
+
+.genubar-theme-light .genubar-shortcut-label-disabled {
+    color: rgba(20, 20, 22, 0.30);
+}
+
+.genubar-theme-light .genubar-submenu-arrow {
+    color: rgba(20, 20, 22, 0.60);
+}
+
+.genubar-theme-light .genubar-submenu-arrow-disabled {
+    color: rgba(20, 20, 22, 0.30);
+}
+
+.genubar-theme-light .genubar-menu-separator {
+    background-color: rgba(0, 0, 0, 0.10);
+}
+
+.genubar-theme-light .genubar-submenu-scroll {
+    border-color: rgba(0, 0, 0, 0.10);
+}
+
+/* Light search input text and caret contrast */
+.genubar-theme-light .genubar-search-entry,
+.genubar-theme-light .genubar-search-entry:focus {
+    background-color: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.16);
+    color: rgba(20, 20, 22, 0.95);
+    caret-color: rgba(20, 20, 22, 0.95);
+}
+
+.genubar-theme-light .genubar-search-entry StLabel {
+    color: rgba(20, 20, 22, 0.95);
+}
+
+.genubar-theme-light .genubar-search-entry StLabel.hint-text {
+    color: rgba(20, 20, 22, 0.45);
+}
+
+/* GENUBAR_METRICS_START */
+.panel-button.genubar-panel-button { -natural-hpadding: 6px; }
+.popup-menu-boxpointer .popup-menu-content { border-radius: 14px; }
+.genubar-menu-scroll, .genubar-submenu-scroll { max-height: 620px; min-width: 215px; }
+.genubar-item-row, .genubar-search-entry { padding: 5px 10px; font-size: 13px; border-radius: 9px; }
+.genubar-item-label, .genubar-item-label-disabled { font-size: 13px; }
+/* GENUBAR_METRICS_END */

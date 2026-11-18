@@ -1,0 +1,13 @@
+{
+  "uuid": "genubar@github.com",
+  "name": "Genubar",
+  "description": "Universal Global Menubar for GNOME",
+  "shell-version": ["47", "48", "49", "50", "51"],
+  "version": 1,
+  "version-name": "0.1.0",
+  "genubar-version": "0.1.0",
+  "min-daemon-version": "0.1.0",
+  "tested-daemon-version": "0.1.0",
+  "ipc-protocol-version": 1,
+  "url": "https://github.com/genubar/genubar-gnome-extension"
+}
