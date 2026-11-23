@@ -155,7 +155,17 @@ export default class GenubarExtension extends Extension {
     }
 
     _isUserSessionActive() {
-        const mode = Main.sessionMode.currentMode;
-        return mode === 'user' || mode === 'user-classic';
+        const sessionMode = Main.sessionMode;
+        if (!sessionMode || sessionMode.isLocked || sessionMode.isGreeter) {
+            return false;
+        }
+        const mode = sessionMode.currentMode;
+        return (
+            mode === 'user' ||
+            mode === 'ubuntu' ||
+            mode === 'classic' ||
+            mode === 'user-classic' ||
+            sessionMode.parentMode === 'user'
+        );
     }
 }
