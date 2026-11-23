@@ -1,6 +1,6 @@
 # <img src="docs/assets/icon.svg" width="42" height="42" valign="middle" alt="Genubar Icon" /> Genubar GNOME Shell Extension
 
-GNOME Shell extension (`genubar@github.com`) for **GNOME 47–51** that turns the top panel into a native global menubar driven over session D-Bus by `genubar-daemon`.
+GNOME Shell extension (`genubar@github.com`) for **GNOME on Wayland** (GNOME Shell 47+, with `shell-version` 47–51 in `metadata.json`; supporting native Wayland and XWayland applications) that renders the top-panel global menubar driven over session D-Bus by `genubar-daemon`.
 
 > **Core Ecosystem Links**
 > - **Core Daemon, Installer, GTK4 Hook & Settings App:** [genubar/genubar](https://github.com/genubar/genubar) ([Latest Releases](https://github.com/genubar/genubar/releases))
@@ -8,7 +8,7 @@ GNOME Shell extension (`genubar@github.com`) for **GNOME 47–51** that turns th
 
 ## Screenshots
 
-| Dark Mode Cascade Menu | Light Mode Panel & Popup |
+| Dark Mode (Nautilus) | Light Mode (Nautilus) |
 | --- | --- |
 | ![Dark Mode Nautilus Menu](docs/screenshots/dark_nautilus.webp) | ![Light Mode Nautilus Menu](docs/screenshots/light_nautilus.webp) |
 
@@ -20,11 +20,14 @@ GNOME Shell extension (`genubar@github.com`) for **GNOME 47–51** that turns th
 
 This extension is the GNOME Shell frontend for [genubar](https://github.com/genubar/genubar) — it requires `genubar-daemon` running in your user session (installed automatically by `genubar-installer`).
 
-GNOME Shell's compositor owns the top panel bar, window focus tracking (`global.display`), and input synthesis on Wayland. `genubar@github.com` keeps all panel layout, styling, focus notifications, fast L0 caching, and lazy UI rendering directly inside GNOME Shell while delegating application menu extraction, profiles, icons, and patch orchestration to `genubar-daemon`.
+On Wayland, clients are isolated from one another and cannot inspect global window focus or other windows' metadata. Only the GNOME Shell compositor has access to window focus tracking (`global.display`), window metadata (`app_id`, titles, GTK `GMenuModel` D-Bus paths, and XWayland XIDs), the top panel bar, and input synthesis. `genubar@github.com` keeps panel layout, styling, focus notifications, fast L0 caching, and lazy UI rendering directly inside GNOME Shell while delegating application menu extraction, profiles, icons, and patch management to `genubar-daemon`.
 
 ---
 
-## Architecture (4-Layer ESM)
+## Architecture
+
+<details>
+<summary>Extension Directory & Module Structure</summary>
 
 ```text
 genubar-gnome-extension/
@@ -43,7 +46,7 @@ genubar-gnome-extension/
 │   │   └── versionCheck.js      # GetDaemonInfo compatibility handshake
 │   ├── platform/                # GNOME Shell / Mutter / Clutter platform adapters
 │   │   ├── windowActions.js     # Window management actions (close, minimize, maximize, tile, etc.)
-│   │   ├── shortcuts.js         # Wayland/X11 keyboard shortcut synthesis via evdev keycodes
+│   │   ├── shortcuts.js         # Keyboard shortcut synthesis via Clutter virtual input device (evdev keycodes)
 │   │   ├── actionRegistry.js    # Unified ActionDispatcher (window, clipboard transforms, daemon)
 │   │   ├── focusTracker.js      # Display focus & background window close/title tracking
 │   │   ├── panelAdapter.js      # Top panel insertion, clock offset sync, dynamic panel width
@@ -60,6 +63,8 @@ genubar-gnome-extension/
 └── tests/
     └── core.test.mjs            # Unit tests runnable under GJS (`gjs -m tests/core.test.mjs`)
 ```
+
+</details>
 
 ---
 
@@ -81,8 +86,8 @@ The extension communicates exclusively with `org.genubar.WindowTracker` (`/org/g
 | Field | Current Value | Meaning |
 | --- | --- | --- |
 | `uuid` | `genubar@github.com` | Extension identifier installed under `~/.local/share/gnome-shell/extensions/` |
-| `shell-version` | `["47", "48", "49", "50", "51"]` | Supported GNOME Shell major versions |
-| `genubar-version` | `0.1.0` | Extension semantic version |
+| `shell-version` | `["47", "48", "49", "50", "51"]` | Declared compatible GNOME Shell major versions |
+| `genubar-version` | `0.1.1` | Extension semantic version |
 | `min-daemon-version` | `0.1.0` | Minimum required `genubar-daemon` version |
 | `tested-daemon-version` | `0.1.0` | Latest daemon version verified against this release |
 | `ipc-protocol-version` | `1` | D-Bus contract version checked at runtime via `GetDaemonInfo` |
@@ -95,7 +100,7 @@ If the running daemon reports an incompatible `ipc-protocol-version` or older ve
 
 ### Method 1: Via Genubar Installer (Recommended)
 
-Download `genubar-installer` from the [Genubar Releases](https://github.com/genubar/genubar/releases) page — it embeds this extension and deploys it alongside `genubar-daemon` and `genubar.service`:
+Download the release archive from the [Genubar Releases](https://github.com/genubar/genubar/releases) page — `genubar-installer` embeds this extension and deploys it alongside `genubar-daemon` and `genubar.service`:
 
 ```bash
 # Full install (daemon + CLI + settings GUI + GTK4 hook + extension)
@@ -130,8 +135,7 @@ gnome-extensions enable genubar@github.com
 
 ## Reloading & Troubleshooting
 
-- **GNOME Wayland:** Shell extensions cannot be hot-reloaded in-place. After installing or updating files, log out and log back in (or test changes safely inside a nested Wayland session: `dbus-run-session -- gnome-shell --nested --wayland`).
-- **GNOME X11:** Press `Alt+F2`, enter `r`, and press `Enter`.
+- **Reloading on GNOME Wayland:** Shell extensions cannot be hot-reloaded in-place. After installing or updating files, log out and log back in (or test changes safely inside a nested Wayland session: `dbus-run-session -- gnome-shell --nested --wayland`).
 - **Verify extension status & logs:**
   ```bash
   gnome-extensions info genubar@github.com
@@ -155,7 +159,6 @@ gjs -m tests/core.test.mjs
 
 Licensed under the [MIT License](LICENSE).
 
+## Acknowledgments
 
-## Acknowledgements
-
-Developed in collaboration with **Google Gemini**
+AI-assisted tooling (Google Gemini) was used for API research, refactoring, and documentation editing. All changes are manually reviewed, tested on GNOME Wayland, and maintained by the author.
