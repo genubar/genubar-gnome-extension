@@ -1,0 +1,37 @@
+name: Release Draft
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install GJS and zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gjs zip
+
+      - name: Run extension unit tests
+        run: gjs -m tests/core.test.mjs
+
+      - name: Package GNOME Shell extension zip
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          zip -r genubar@github.com.shell-extension.zip \
+            metadata.json extension.js stylesheet.css lib LICENSE README.md
+
+      - name: Create GitHub Draft Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Genubar GNOME Extension ${{ github.ref_name }}
+          draft: true
+          generate_release_notes: true
+          files: genubar@github.com.shell-extension.zip
