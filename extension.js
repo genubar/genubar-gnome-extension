@@ -18,6 +18,7 @@ export default class GenubarExtension extends Extension {
     enable() {
         this._isEnabled = true;
         this._daemonLost = false;
+        this._lastLiveCssRevision = 0;
 
         const isActive = () => Boolean(this._isEnabled && this._isUserSessionActive());
 
@@ -45,6 +46,13 @@ export default class GenubarExtension extends Extension {
                 fromLiveDaemon: true,
             });
             if (parsed) {
+                const rev = parsed.ui_config?.css_revision || 0;
+                if (rev > 0 && this._lastLiveCssRevision > 0 && rev !== this._lastLiveCssRevision) {
+                    this._l0Cache?.clear();
+                }
+                if (rev > 0) {
+                    this._lastLiveCssRevision = rev;
+                }
                 this._l0Cache?.setFromPayload(parsed, rawJson);
             }
         };
@@ -54,6 +62,7 @@ export default class GenubarExtension extends Extension {
             hasOpenPopup: () => this._menuBar?.hasOpenPopup() ?? false,
             onWindowClosed: pid => this._l0Cache?.invalidatePid(pid),
             onWindowFocus: focusPayload => {
+                if (this._daemonLost) return;
                 const seq = this._store.bumpFocusSeq();
                 const cached = this._l0Cache.getForWindow(focusPayload.pid, focusPayload.appId);
                 if (cached) {
@@ -69,6 +78,7 @@ export default class GenubarExtension extends Extension {
                 );
             },
             onDesktopFocus: () => {
+                if (this._daemonLost) return;
                 const seq = this._store.bumpFocusSeq();
                 const desktopCached = this._l0Cache.getDesktop();
                 if (desktopCached) {
@@ -101,7 +111,9 @@ export default class GenubarExtension extends Extension {
             },
             onVanished: () => {
                 this._daemonLost = true;
+                this._lastLiveCssRevision = 0;
                 this._versionVerifier?.reset();
+                this._l0Cache?.clear();
                 this._store?.clear();
             },
         });

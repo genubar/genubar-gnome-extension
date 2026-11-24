@@ -121,17 +121,33 @@ assert(!store.hasLiveSync(), 'dropped stale reply does not mark live sync');
 
 const validJson = JSON.stringify({
     source: 'GTK4-Hook',
-    ui_config: { theme_mode: 'dark' },
+    ui_config: { theme_mode: 'dark', css_revision: 42 },
     root: { children: [{ id: 1, label: 'Files', visible: true, children: [] }] },
 });
+const cachedJson = JSON.stringify({
+    source: 'GTK4-Hook',
+    ui_config: { theme_mode: 'dark', css_revision: 1 },
+    root: { children: [{ id: 1, label: 'Cached Files', visible: true, children: [] }] },
+});
+assert(store.apply({ rawJson: cachedJson, expectedSeq: seq2, fromLiveDaemon: false }) !== null, 'MenuStore applies L0 cache payload');
+assert(store.getSnapshot().fromLiveDaemon === false, 'L0 cache paint marks fromLiveDaemon=false');
+assert(!store.hasLiveSync(), 'L0 cache paint does not mark live sync');
+
 assert(store.apply({ rawJson: validJson, expectedSeq: seq2, fromLiveDaemon: true }) !== null, 'MenuStore applies matching focusSeq');
+assert(store.getSnapshot().fromLiveDaemon === true, 'live daemon reply marks fromLiveDaemon=true');
 assert(store.hasLiveSync(), 'applied daemon reply marks live sync');
-assert(seenSnapshots === 1, 'MenuStore notifies subscriber once');
+assert(seenSnapshots === 2, 'MenuStore notifies subscriber on cache and live updates');
 assert(store.apply({ rawJson: validJson, expectedSeq: seq2, fromLiveDaemon: true }) === null, 'MenuStore deduplicates identical JSON');
-assert(seenSnapshots === 1, 'duplicate JSON does not re-notify');
+assert(seenSnapshots === 2, 'duplicate JSON does not re-notify');
 
 store.clear();
-assert(seenSnapshots === 2 && store.getTopNodes().length === 0 && !store.hasLiveSync(), 'MenuStore clear resets state');
+assert(
+    seenSnapshots === 3 &&
+        store.getTopNodes().length === 0 &&
+        !store.hasLiveSync() &&
+        store.getSnapshot().fromLiveDaemon === false,
+    'MenuStore clear resets state'
+);
 unsub();
 
 const modDbus = await import('../lib/ipc/dbusClient.js');
